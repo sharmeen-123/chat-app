@@ -1,60 +1,47 @@
 const express = require("express");
-const cors = require("cors");
-const dotenv = require("dotenv");
-const router = require("../routes/main.route");
-const initSocket = require("../routes/socket");
-const http = require("http");
-const mongoose = require("mongoose");
+const morgan = require('morgan') // hppt request logger middleware for node.js
+const ratelimit = require('express-rate-limit')
+const helmet = require("helmet")
+const mongosanitize = require('express-mongo-sanitize')
+const bodyParser = require('body-parser')
+const xss = require("xss") // sanitize untrusted html
+const cors = require("cors") // allow cross origin request
 
-class App {
-  constructor() {
-    this.app = express();
-    this.app.use(express.json());
-    this.http = new http.Server(this.app);
-    this.io = require("socket.io")(this.http, {
-      withCredentials: true,
-      transports: ["websocket", "polling"],
-      cors: {
-        origin: "*",
-      },
-    });
-    this.PORT = process.env.PORT || 8000;
-    this.initMiddleware();
-    this.connectToMongoDB();
-    this.initRoutes();
-  }
-  initMiddleware() {
-    this.app.use(cors());
-    this.app.use(express.json());
-    dotenv.config();
-  }
-  connectToMongoDB() {
-    const db = process.env.MONGO_CONNECTION;
-    mongoose.connect(
-      db,
-      {
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
-        useCreateIndex: true,
-      },
-      (err, db) => {
-        if (err) {
-          console.log("err", err);
-        } else {
-          console.log("db connected");
-        }
-      }
-    );
-  }
-  initRoutes() {
-    this.app.use("/", router);
-    initSocket(this.io);
-  }
-  createServer() {
-    this.http.listen(this.PORT, () => {
-      console.log("Server started at port 8000");
-    });
-  }
+const app = express()
+
+app.use(express.urlencoded({
+  extended: true
+}))
+
+app.use(mongosanitize());
+
+// app.use(xss())
+
+app.use(cors({
+  origin: "*",
+  methods: ['GET' ,'PATCH', 'POST', 'DELETE', 'PUT'],
+  credentials: true,
+}))
+
+//
+app.use(express.json({limit : '10kb'}));
+
+app.use(bodyParser.json())
+app.use(bodyParser.urlencoded({extended: true}))
+
+app.use(helmet());
+
+if(process.env.NODE_ENV === 'development'){
+  app.use(morgan("dev"))
 }
 
-module.exports = App;
+const limiter = ratelimit({
+  max: 3000,
+  windowMs: 60 * 60 * 1000, // 1 hour 
+  message: "Too many requests from this IP, please try again in an hour"
+})
+
+app.use("/tawk",limiter)
+
+
+module.exports = app;
