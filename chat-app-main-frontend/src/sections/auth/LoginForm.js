@@ -15,9 +15,11 @@ import {
 } from "@mui/material";
 import { RHFTextField } from "../../components/hook-form";
 import { Eye, EyeSlash } from "phosphor-react";
+import { LoginUser } from "../../Redux/slices/auth";
+import { useDispatch } from "react-redux";
 
 const LoginForm = () => {
-  console.log("in login form");
+  const dispatch = useDispatch();
   const [showPassword, setShowPassword] = useState(false);
   const LoginSchema = Yup.object().shape({
     email: Yup.string()
@@ -46,6 +48,7 @@ const LoginForm = () => {
   const onSubmit = async (data) => {
     try {
       // submit data to backend
+      dispatch(LoginUser(data));
     } catch (error) {
       console.log(error);
       reset();
@@ -64,22 +67,28 @@ const LoginForm = () => {
 
         <RHFTextField name="email" label="Email address" />
         <RHFTextField
-      name="password"
-      label="Password"
-      type={showPassword ? "text" : "password"}
-      InputProps={{
-        endAdornment: (
-          <InputAdornment position="end">
-            <IconButton onClick={() => setShowPassword(!showPassword)}>
-              {showPassword ? <Eye /> : <EyeSlash />}
-            </IconButton>
-          </InputAdornment>
-        ),
-      }}
-    />
+          name="password"
+          label="Password"
+          type={showPassword ? "text" : "password"}
+          InputProps={{
+            endAdornment: (
+              <InputAdornment position="end">
+                <IconButton onClick={() => setShowPassword(!showPassword)}>
+                  {showPassword ? <Eye /> : <EyeSlash />}
+                </IconButton>
+              </InputAdornment>
+            ),
+          }}
+        />
       </Stack>
       <Stack alignItems={"flex-end"} sx={{ my: 2 }}>
-        <Link component={RouterLink} to="/auth/reset-password" variant="body2" color="inherit" underline="always">
+        <Link
+          component={RouterLink}
+          to="/auth/reset-password"
+          variant="body2"
+          color="inherit"
+          underline="always"
+        >
           Forget Password
         </Link>
       </Stack>
