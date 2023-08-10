@@ -221,7 +221,7 @@ module.exports = (name, otp) => {
 
                               <div style="color: #958d8d; line-height: 170%; text-align: center; word-wrap: break-word;">
                                 <p style="font-size: 14px; line-height: 170%;">Love 💙 Team Tawk</p>
-                                <p style="font-size: 14px; line-height: 170%;">For any assistance and queries write to us at <a rel="noopener" href="mailto:fa20-bcs-088@isbstudent.comsats.edu.pk?" target="_blank">Support@codingmonk.in</a><br /><br /></p>
+                                <p style="font-size: 14px; line-height: 170%;">For any assistance and queries write to us at <a rel="noopener" href="mailto:fa20-bcs-088@isbstudent.comsats.edu.pk?" target="_blank">fa20-bcs-088@isbstudent.comsats.edu.pk</a><br /><br /></p>
                               </div>
 
                             </td>

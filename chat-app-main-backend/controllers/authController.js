@@ -194,8 +194,10 @@ exports.protect = catchAsync(async (req, res, next) => {
   if (
     req.headers.authorization &&
     req.headers.authorization.startsWith("Bearer")
+
   ) {
-    token = req.headers.authorization.split(" ")[1];
+    token = req.headers.authorization.split("Bearer")[1];
+    console.log("token is...", req.headers.authorization.split("Bearer")[2])
   } else if (req.cookies.jwt) {
     token = req.cookies.jwt;
   }
@@ -232,6 +234,7 @@ exports.protect = catchAsync(async (req, res, next) => {
 
 exports.forgotPassword = catchAsync(async (req, res, next) => {
   // 1) Get user based on POSTed email
+  console.log("body is..",req.body)
   const user = await User.findOne({ email: req.body.email });
   if (!user) {
     return res.status(404).json({

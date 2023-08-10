@@ -52,6 +52,7 @@ exports.getUsers = catchAsync(async (req, res, next) => {
       !this_user.friends.includes(user._id) &&
       user._id.toString() !== req.user._id.toString()
   );
+  console.log("users aree", remaining_users)
 
   res.status(200).json({
     status: "success",

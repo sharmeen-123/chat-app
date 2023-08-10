@@ -61,15 +61,20 @@ io.on("connection", async (socket) => {
 
   console.log(`User connected ${socket.id}`);
 
-  if (user_id != null && Boolean(user_id)) {
-    try {
-      User.findByIdAndUpdate(user_id, {
-        socket_id: socket.id,
-        status: "Online",
-      });
-    } catch (e) {
-      console.log(e);
-    }
+  // if (user_id != null && Boolean(user_id)) {
+  //   try {
+  //     User.findByIdAndUpdate(user_id, {
+  //       socket_id: socket.id,
+  //       status: "Online",
+  //     });
+  //   } catch (e) {
+  //     console.log(e);
+  //   }
+  // }
+
+  const socket_id = socket.id;
+  if(Boolean(user_id)){
+    await User.findByIdAndUpdate(user_id, {socket_id, status: "Online",})
   }
 
   // We can write our socket event listeners in here...
@@ -163,7 +168,8 @@ io.on("connection", async (socket) => {
     }
     // if yes => just emit event "start_chat" & send conversation details as payload
     else {
-      socket.emit("start_chat", existing_conversations[0]);
+      // socket.emit("start_chat", existing_conversations[0]);
+      socket.emit("open_chat", existing_conversations[0]);
     }
   });
 
